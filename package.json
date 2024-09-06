@@ -1,5 +1,11 @@
 {
     "engines": {
     "node": "18.x"
-    }
+    },
+    "builds": [
+        {
+          "src": "composer.json",
+          "use": "@vercel/php"
+      }
+    ]
 }
