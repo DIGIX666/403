@@ -17,7 +17,7 @@ if (strpos($ipaddr, ',') !== false) {
     $ipaddr = preg_split("/\,/", $ipaddr)[0];
 }
 
-// Requête vers l'API pour obtenir les informations IP
+
 $apiUrl = "http://ip-api.com/json/{$ipaddr}";
 $response = file_get_contents($apiUrl);
 $data = json_decode($response, true);
@@ -31,7 +31,7 @@ if ($data['status'] == 'success') {
     $lat = isset($data['lat']) ? $data['lat'] : 'Unknown';
     $lon = isset($data['lon']) ? $data['lon'] : 'Unknown';
 
-    // Formatage du message
+
     $log = "IP Address: " . $ipaddr . "\r\n" .
            "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
            "Location: " . $city . ", " . $regionName . ", " . $country . "\r\n" .
@@ -39,7 +39,7 @@ if ($data['status'] == 'success') {
            "Latitude: " . $lat . " - Longitude: " . $lon . "\r\n" .
            "--------------------------------------------\r\n";
 
-    // Paramètres d'envoi de l'email avec PHPMailer
+
     $subject = "Nouvelle visite détectée sur la page 403";
     $message = $log;
     $to = "digixit66@gmail.com";
@@ -51,19 +51,19 @@ if ($data['status'] == 'success') {
     try {
         // Configuration du serveur SMTP d'OVH
         $mail->isSMTP();
-        $mail->Host       = 'ssl0.ovh.net'; // Serveur SMTP OVH
+        $mail->Host       = 'ssl0.ovh.net'; 
         $mail->SMTPAuth   = true;
-        $mail->Username   = $smtpUsername;  // Ton adresse email OVH
-        $mail->Password   = $smtpPassword;  // Ton mot de passe email OVH
-        $mail->SMTPSecure = 'tls';            // Utilise TLS pour sécuriser la connexion
-        $mail->Port       = 587;              // Port TLS d'OVH
+        $mail->Username   = $smtpUsername;  
+        $mail->Password   = $smtpPassword;  
+        $mail->SMTPSecure = 'tls';          
+        $mail->Port       = 587;           
 
         // Destinataires
-        $mail->setFrom('tonadresse@tondomaine.com', 'Ton Nom');
-        $mail->addAddress($to);  // Adresse du destinataire
+        $mail->setFrom('digixit66@gmail.com', 'Thox');
+        $mail->addAddress($to);  
 
         // Contenu de l'email
-        $mail->isHTML(false);    // Format texte brut pour l'email
+        $mail->isHTML(false);    
         $mail->Subject = $subject;
         $mail->Body    = $message;
 
