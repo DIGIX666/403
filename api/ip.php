@@ -44,18 +44,5 @@ if ($data['status'] == 'success') {
                "Reply-To: noreply@tondomaine.com" . "\r\n" .
                "X-Mailer: PHP/" . phpversion();
 
-    // Essayer d'envoyer l'email sans sortie visible
-    if (mail($to, $subject, $message, $headers)) {
-        error_log('Email envoyé avec succès.'); 
-    } else {
-        error_log('Échec de l\'envoi de l\'email.'); 
-    }
-
-} else {
-    $log = "Failed to get location for IP: " . $ipaddr . "\r\n" .
-           "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
-           "--------------------------------------------\r\n";
-
-    error_log($log);  // Log des erreurs API
 }
 ?>
