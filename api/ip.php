@@ -1,6 +1,4 @@
 <?php
-
-// IP
 if (isset($_SERVER['HTTP_CLIENT_IP'])) {
     $ipaddr = $_SERVER['HTTP_CLIENT_IP'];
 } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -13,14 +11,14 @@ if (strpos($ipaddr, ',') !== false) {
     $ipaddr = preg_split("/\,/", $ipaddr)[0];
 }
 
-// Request to API
+// Requête vers l'API
 $apiUrl = "http://ip-api.com/json/{$ipaddr}";
 $response = file_get_contents($apiUrl);
 $data = json_decode($response, true); 
 
-// 3. Vérification de l'état de la requête
+
 if ($data['status'] == 'success') {
-    // Receive the data
+
     $city = isset($data['city']) ? $data['city'] : 'Unknown';
     $regionName = isset($data['regionName']) ? $data['regionName'] : 'Unknown';
     $country = isset($data['country']) ? $data['country'] : 'Unknown';
@@ -28,7 +26,7 @@ if ($data['status'] == 'success') {
     $lat = isset($data['lat']) ? $data['lat'] : 'Unknown';
     $lon = isset($data['lon']) ? $data['lon'] : 'Unknown';
 
-    // Format the log message
+    
     $log = "IP Address: " . $ipaddr . "\r\n" .
            "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
            "Location: " . $city . ", " . $regionName . ", " . $country . "\r\n" .
@@ -36,29 +34,28 @@ if ($data['status'] == 'success') {
            "Latitude: " . $lat . " - Longitude: " . $lon . "\r\n" .
            "--------------------------------------------\r\n";
 
-    
     $subject = "Nouvelle visite détectée sur la page 403";
     $message = $log;
 
-    
     $to = "digixit66@gmail.com";
 
-    // Header mail
+
     $headers = "From: noreply@tondomaine.com" . "\r\n" .
                "Reply-To: noreply@tondomaine.com" . "\r\n" .
                "X-Mailer: PHP/" . phpversion();
 
-    // Send mail
+    // Essayer d'envoyer l'email sans sortie visible
     if (mail($to, $subject, $message, $headers)) {
-        echo 'Email envoyé avec succès.';
+        error_log('Email envoyé avec succès.'); 
     } else {
-        echo 'Échec de l\'envoi de l\'email.';
+        error_log('Échec de l\'envoi de l\'email.'); 
     }
 
 } else {
-    // Si l'API renvoie un statut d'erreur, on log l'erreur
     $log = "Failed to get location for IP: " . $ipaddr . "\r\n" .
            "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
            "--------------------------------------------\r\n";
+
+    error_log($log);  // Log des erreurs API
 }
 ?>
