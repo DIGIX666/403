@@ -1,0 +1,91 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f9;
+    font-family: 'Arial', sans-serif;
+}
+
+.container {
+    text-align: center;
+}
+
+.icon {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.stop-sign {
+    width: 150px;
+    height: 150px;
+    background-color: #ff6b6b;
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.hand {
+    width: 20px;
+    height: 80px;
+    background-color: #feca57;
+    position: absolute;
+    top: 50px;
+    left: 43%;
+    border-radius: 10px;
+}
+
+.hand::before {
+    content: '';
+    position: absolute;
+    background-color: #feca57;
+    border-radius: 10px;
+}
+
+.hand::before {
+    width: 20px;
+    height: 20px;
+    top: -30px;
+    left: 0px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #2f3542;
+}
+
+h2 {
+    font-size: 6rem;
+    color: #ff4757;
+    margin: 10px 0;
+}
+
+p {
+    font-size: 1.2rem;
+    color: #57606f;
+    margin-bottom: 20px;
+}
+
+.home-btn {
+    padding: 12px 25px;
+    font-size: 1rem;
+    color: white;
+    background-color: #ff4757;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.home-btn:hover {
+    background-color: #ff6b6b;
+}
