@@ -1,11 +1,5 @@
 {
     "require": {
         "phpmailer/phpmailer": "^6.9"
-    },
-    "builds": [
-        {
-          "src": "composer.json",
-          "use": "@vercel/php"
-      }
-    ]
+    }
 }
