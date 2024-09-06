@@ -5,8 +5,8 @@
       }
     },
     "routes": [
+      { "src": "/", "dest": "/api/index.php"},
       { "src": "/api/(.*)", "dest": "/api/$1" }, 
-      { "src": "/(.*)", "dest": "/public/$1" },
-      { "src": "/", "dest": "/api/index.php", "methods": ["GET"] }
+      { "src": "/(.*)", "dest": "/public/$1" }
     ]
   }
