@@ -1,10 +1,5 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require 'vendor/autoload.php'; // Inclure PHPMailer via Composer
-
-// Récupération de l'adresse IP
+// IP
 if (isset($_SERVER['HTTP_CLIENT_IP'])) {
     $ipaddr = $_SERVER['HTTP_CLIENT_IP'];
 } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -17,13 +12,14 @@ if (strpos($ipaddr, ',') !== false) {
     $ipaddr = preg_split("/\,/", $ipaddr)[0];
 }
 
-
+// Requête vers l'API
 $apiUrl = "http://ip-api.com/json/{$ipaddr}";
 $response = file_get_contents($apiUrl);
 $data = json_decode($response, true);
 
+// Vérification de l'état de la requête
 if ($data['status'] == 'success') {
-    // Récupération des informations de localisation
+    // Récupération des informations
     $city = isset($data['city']) ? $data['city'] : 'Unknown';
     $regionName = isset($data['regionName']) ? $data['regionName'] : 'Unknown';
     $country = isset($data['country']) ? $data['country'] : 'Unknown';
@@ -31,54 +27,25 @@ if ($data['status'] == 'success') {
     $lat = isset($data['lat']) ? $data['lat'] : 'Unknown';
     $lon = isset($data['lon']) ? $data['lon'] : 'Unknown';
 
+    // Formatage du message à sauvegarder
+    $logMessage = "IP Address: " . $ipaddr . "\r\n" .
+                  "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
+                  "Location: " . $city . ", " . $regionName . ", " . $country . "\r\n" .
+                  "ISP: " . $isp . "\r\n" .
+                  "Latitude: " . $lat . " - Longitude: " . $lon . "\r\n" .
+                  "--------------------------------------------\r\n";
 
-    $log = "IP Address: " . $ipaddr . "\r\n" .
-           "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
-           "Location: " . $city . ", " . $regionName . ", " . $country . "\r\n" .
-           "ISP: " . $isp . "\r\n" .
-           "Latitude: " . $lat . " - Longitude: " . $lon . "\r\n" .
-           "--------------------------------------------\r\n";
-
-
-    $subject = "Nouvelle visite détectée sur la page 403";
-    $message = $log;
-    $to = "digixit66@gmail.com";
-    $smtpUsername = getenv('OVH_SMTP_USERNAME');
-    $smtpPassword = getenv('OVH_SMTP_PASSWORD');
-
-    $mail = new PHPMailer(true);
-
-    try {
-        // Configuration du serveur SMTP d'OVH
-        $mail->isSMTP();
-        $mail->Host       = 'ssl0.ovh.net'; 
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $smtpUsername;  
-        $mail->Password   = $smtpPassword;  
-        $mail->SMTPSecure = 'tls';          
-        $mail->Port       = 587;           
-
-        // Destinataires
-        $mail->setFrom('digixit66@gmail.com', 'Thox');
-        $mail->addAddress($to);  
-
-        // Contenu de l'email
-        $mail->isHTML(false);    
-        $mail->Subject = $subject;
-        $mail->Body    = $message;
-
-        // Envoyer l'email
-        $mail->send();
-        error_log('Email envoyé avec succès.');
-    } catch (Exception $e) {
-        error_log("L'envoi de l'email a échoué. Erreur: {$mail->ErrorInfo}");
-    }
-
+    // Sauvegarde dans un fichier log.txt
+    $filePath = __DIR__ . '/log.txt';  // Chemin vers le fichier log.txt
+    file_put_contents($filePath, $logMessage, FILE_APPEND | LOCK_EX);  // Ajout des données au fichier
+    echo 'Données sauvegardées avec succès dans le fichier log.txt.';
 } else {
-    // Si l'API échoue, on enregistre l'erreur
-    $log = "Failed to get location for IP: " . $ipaddr . "\r\n" .
-           "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
-           "--------------------------------------------\r\n";
-    error_log($log);
+    // Log si l'API échoue
+    $errorMessage = "Failed to get location for IP: " . $ipaddr . "\r\n" .
+                    "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\r\n" .
+                    "--------------------------------------------\r\n";
+
+    $filePath = __DIR__ . '/log.txt';
+    file_put_contents($filePath, $errorMessage, FILE_APPEND | LOCK_EX);
+    echo 'Une erreur est survenue. Les informations ont été sauvegardées.';
 }
-?>
